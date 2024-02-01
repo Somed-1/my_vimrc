@@ -10,7 +10,7 @@ call plug#begin()
 
   " Plugin color schemes
   Plug 'ericbn/vim-solarized'
-  Plug 'crusoexia/vim-monokai'
+  Plug 'ErichDonGubler/vim-sublime-monokai'
   Plug 'bluz71/vim-nightfly-colors', { 'as': 'nightfly' }
   Plug 'rafalbromirski/vim-aurora'
   Plug 'haishanh/night-owl.vim'
@@ -55,7 +55,7 @@ set shiftwidth=4
 set tabstop=4
 set nobackup
 set scrolloff=10
-set nowrap " no wrap lines
+set nowrap
 set incsearch
 set ignorecase
 set smartcase
@@ -75,12 +75,16 @@ set list          " Enable list mode
 set list lcs=tab:\¦\ 
 set splitbelow
 set shell=powershell.exe
+" set cmdheight=1
 " }}}
 
 " PluginSettings ---------------------------------------------------------------- {{{
 
 " Airline Plugin
 let g:airline_theme='nightfly'
+let g:airline_theme='atomic'
+let g:airline_powerline_fonts = 1
+let g:airline#extensions#tabline#enabled = 1
 
 let g:python_highlight_all = 1
 
@@ -323,14 +327,22 @@ nnoremap <S-Down> :m+<CR>
 inoremap <S-Up> <Esc>:m-2<CR>
 inoremap <S-Down> <Esc>:m+<CR>
 
-" Remove white spaces
-nnoremap <leader>ws :%s/\s\+$//g<CR>
-
 " }}}
 
 " VIMSCRIPT -------------------------------------------------------------- {{{
 
+let &t_SI.="\e[5 q" "SI = режим вставки
+let &t_SR.="\e[3 q" "SR = режим замены
+let &t_EI.="\e[1 q" "EI = нормальный режим
+
 command! Vimrc :vs $MYVIMRC
+
+function! RemoveTrailingWhitespace()
+    :%s/\s\+$//g
+endfunction
+
+command! TrimWhitespace call RemoveTrailingWhitespace()
+
 
 " Enable the marker method of folding.
 augroup filetype_vim
@@ -362,7 +374,11 @@ augroup END
 
 " If GUI version of Vim is running set these options.
 if has('gui_running')
-    set guifont=Lucida_Console:h9
+
+    \set guioptions-=m  "menu bar
+    \set guioptions-=T  "toolbar
+    \set guioptions-=r  "scrollbar
+    set guifont=JetBrains_Mono:h9
     set langmenu=en_US
     let $LANG = 'en_US'
     source $VIMRUNTIME/delmenu.vim
@@ -374,9 +390,9 @@ if has('gui_running')
     " Syntax: set guifont=<font_name>\ <font_weight>\ <size>
     " Display more of the file by default.
     " Hide the toolbar, left-side scroll bar, right-side scroll bar, menu bar, and bottom scroll bar.
-    set guioptions-=TLrbm
     " Map the F4 key to toggle the menu, toolbar, and scroll bar.
     nnoremap <F4> :if &guioptions=~#'mTr'<Bar>
+        \set guioptions-=TLrbm
         \set guioptions-=mTr<Bar>
         \else<Bar>
         \set guioptions+=mTr<Bar>
