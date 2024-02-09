@@ -6,21 +6,22 @@ This vimrc contains plugins for autocomplete, my favorite colorschemes, syntax h
 
 ## Instalation
 
-Clone repo with `git clone https://github.com/Somed-1/my_vimrc.git`
-
-Install Plug manager https://github.com/junegunn/vim-plug
-
-Then you need to install `Nodejs` version above 16 and `yarn` gloabaly\
-
+Clone repo with `git clone https://github.com/Somed-1/my_vimrc.git` and move `.vimrc` file to your root directory  
+Install Plug manager [vim-plug](https://github.com/junegunn/vim-plug  ) so you can install plugins.  
+Then you need to install `Nodejs` version above 16 and `yarn` gloabaly  
+Open .vimrc file and enter `:PlugInsatll` command  
 Coc Autocomplete extentions for:
 - Python: coc-pyright (`:CocInstall coc-pyright`)
 - C/C++: coc-clangd (`:CocInstall coc-clangd`)
+    > Don't forget to install clangd
 - HTML/CSS: coc-html, coc-css (`:CocInstall coc-html coc-css`)
 - JavaScript: coc-tsserver (`:CocInstall coc-tsserver`)
 - Json: coc-json (`:CocInstall coc-json`)
 
 
 ## Cheat sheep
+
+---
 
 ### Horizontal movement
 
