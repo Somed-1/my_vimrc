@@ -21,49 +21,49 @@ Coc Autocomplete extentions for:
 
 ### Horizontal movement
 
-% - move around two closings ({}, [], (), html tags)
-$ - end of line
-_ - start of line (non blank)
-0 - start of line
-f/t<character> - move to character(forward)
-F/T<character> - move to character(backward)
-<number>h/l - move cursor n times
+ - % - move around two closings ({}, [], (), html tags)
+ - $ - end of line
+ - _ - start of line (non blank)
+ - 0 - start of line
+ - f/t<character> - move to character(forward)
+ - F/T<character> - move to character(backward)
+ - <number>h/l - move cursor n times
 
 ### Vertical movement
 
-% - move around two closings ({}, [], (), html tags)
-{} - move by paragraphs (blank lines)
-ctrl + d/u - move down/up half of page
-:<number> - move to line
-<number>j/k - move cursor n times
-z z/t/b - move page based on cursor
+ - % - move around two closings ({}, [], (), html tags)
+ - {} - move by paragraphs (blank lines)
+ - ctrl + d/u - move down/up half of page
+ - :<number> - move to line
+ - <number>j/k - move cursor n times
+ - z z/t/b - move page based on cursor
 
 ### Macrosses
-@l - select []
-@s - select ""
-@t - select ()
-@y - copy (gvim)
-@p - paste (gvim)
+ - @l - select []
+ - @s - select ""
+ - @t - select ()
+ - @y - copy (gvim)
+ - @p - paste (gvim)
 
 ### Key mappings
-<F5> - run python file
-<F6> - turn on/off mouse
-<F12> - increase font size (gvim)
-shift + <F12> - decrease font size (gvim)
+ - <F5> - run python file
+ - <F6> - turn on/off mouse
+ - <F12> - increase font size (gvim)
+ - shift + <F12> - decrease font size (gvim)
 
-ctrl + arrows - change window size
-ctrl + h/j/k/l - move around windows
+ - ctrl + arrows - change window size
+ - ctrl + h/j/k/l - move around windows
 
 ## Plugins
 
 ### NERDtree
-<F3> - open/close NERDtree (directory tree)
-R - reload directory
-cd - change curent directory
-C - move to directory
-u - back in directory
-m - open menu
-? - open help
+ - <F3> - open/close NERDtree (directory tree)
+ - R - reload directory
+ - cd - change curent directory
+ - C - move to directory
+ - u - back in directory
+ - m - open menu
+ - ? - open help
 
 ### NERDcommenter
-ctrl + _ - comment/uncomment line/lines
+ - ctrl + _ - comment/uncomment line/lines
