@@ -13,15 +13,13 @@ Open .vimrc file and enter `:PlugInsatll` command
 Coc Autocomplete extentions for:
 - Python: coc-pyright (`:CocInstall coc-pyright`)
 - C/C++: coc-clangd (`:CocInstall coc-clangd`)
-    > Don't forget to install clangd
+    > Don't forget to install [clangd](https://releases.llvm.org/8.0.0/tools/clang/tools/extra/docs/clangd/Installation.html#:~:text=Installing%20clangd&text=Download%20and%20run%20the%20LLVM%20installer%20from%20releases.llvm.org.&text=The%20clang%2Dtools%20package%20usually%20contains%20an%20old%20version%20of%20clangd.&text=If%20that%20is%20not%20found,tools%2D7%20should%20be%20available.&text=Most%20distributions%20include%20clangd%20in,in%20the%20full%20llvm%20distribution.)
 - HTML/CSS: coc-html, coc-css (`:CocInstall coc-html coc-css`)
 - JavaScript: coc-tsserver (`:CocInstall coc-tsserver`)
 - Json: coc-json (`:CocInstall coc-json`)
 
 
 ## Cheat sheep
-
----
 
 ### Horizontal movement
 
