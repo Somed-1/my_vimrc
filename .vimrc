@@ -7,6 +7,11 @@ call plug#begin()
 
   " Plugin for file tree explorer
   Plug 'preservim/nerdtree'
+  " TagBar (objects tree)
+  " Plug 'preservim/tagbar'
+  
+  " Simple start windows
+  Plug 'mhinz/vim-startify'
 
   " Plugin color schemes
   Plug 'ericbn/vim-solarized'
@@ -24,6 +29,8 @@ call plug#begin()
   " Good looking underline
   Plug 'vim-airline/vim-airline'
   Plug 'vim-airline/vim-airline-themes'
+  " Adds icons
+  Plug 'ryanoasis/vim-devicons'
 
   " Multiple lines like in sublime text
   Plug 'terryma/vim-multiple-cursors'
@@ -33,13 +40,18 @@ call plug#begin()
 
   " Easy to comment
   Plug 'preservim/nerdcommenter'
-
+  " Easy work with html
+  Plug 'mattn/emmet-vim'
+  " Closing html tags
+  Plug 'alvan/vim-closetag'
+  " Buff % key
+  Plug 'andymass/vim-matchup'
 call plug#end()
 
 " }}}
 
 " General Settings -------------------------------------------------------- {{{
-
+set autochdir
 
 set langmenu=en_US
 let $LANG = 'en_US'
@@ -49,7 +61,16 @@ set nocompatible " no compatibility with vi
 syntax enable
 set background=dark
 colorscheme nightfly
-set number
+
+:set number
+:augroup numbertoggle
+:  autocmd!
+:  autocmd BufEnter,FocusGained,InsertLeave,WinEnter * if &nu && mode() != "i" | set rnu   | endif
+:  autocmd BufLeave,FocusLost,InsertEnter,WinLeave   * if &nu                  | set nornu | endif
+:augroup END
+
+set guitablabel=%t
+
 set cursorline
 set shiftwidth=4
 set tabstop=4
@@ -71,24 +92,37 @@ set mouse=a " enable mouse by default
 " Good performance
 set lazyredraw
 " Show tabs using dots
-set list          " Enable list mode
+set list		  " Enable list mode
 set list lcs=tab:\¦\ 
 set splitbelow
 set shell=powershell.exe
+set relativenumber
+
+" macros for selecting strings, lists, tuples
+let @s = '0f"v$F"'
+let @l = '0f[v$F]'
+let @t = '0f(v$F)'
+
+" macros for copy/paste in gvim
+let @y = '"+y'
+let @p = '"+p'
+
 " set cmdheight=1
 " }}}
 
 " PluginSettings ---------------------------------------------------------------- {{{
 
-" Airline Plugin
-let g:airline_theme='nightfly'
-let g:airline_theme='atomic'
+" Airline Plugin {{{
+
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#fnamemod = ':t'
+
+" }}}
 
 let g:python_highlight_all = 1
 
-" Nerd commenter Plugin
+" Nerd commenter Plugin {{{
 " Create default mappings
 let g:NERDCreateDefaultMappings = 1
 
@@ -116,7 +150,9 @@ let g:NERDTrimTrailingWhitespace = 1
 " Enable NERDCommenterToggle to check all selected lines is commented or not 
 let g:NERDToggleCheckAllLines = 1
 
-" Coc Plugin
+" }}}
+
+" Coc Plugin {{{
 
 " May need for Vim (not Neovim) since coc.nvim calculates byte offset by count
 " utf-8 byte sequence
@@ -139,19 +175,19 @@ set signcolumn=yes
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
 " other plugin before putting this into your config
 inoremap <silent><expr> <TAB>
-      \ coc#pum#visible() ? coc#pum#next(1) :
-      \ CheckBackspace() ? "\<Tab>" :
-      \ coc#refresh()
+	  \ coc#pum#visible() ? coc#pum#next(1) :
+	  \ CheckBackspace() ? "\<Tab>" :
+	  \ coc#refresh()
 inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
 
 " Make <CR> to accept selected completion item or notify coc.nvim to format
 " <C-g>u breaks current undo, please make your own choice
 inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
-                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+							  \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
 function! CheckBackspace() abort
   let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
+  return !col || getline('.')[col - 1]	=~# '\s'
 endfunction
 
 " Use <c-space> to trigger completion
@@ -177,9 +213,9 @@ nnoremap <silent> K :call ShowDocumentation()<CR>
 
 function! ShowDocumentation()
   if CocAction('hasProvider', 'hover')
-    call CocActionAsync('doHover')
+	call CocActionAsync('doHover')
   else
-    call feedkeys('K', 'in')
+	call feedkeys('K', 'in')
   endif
 endfunction
 
@@ -190,8 +226,8 @@ autocmd CursorHold * silent call CocActionAsync('highlight')
 nmap <leader>rn <Plug>(coc-rename)
 
 " Formatting selected code
-xmap <leader>f  <Plug>(coc-format-selected)
-nmap <leader>f  <Plug>(coc-format-selected)
+xmap <leader>f	<Plug>(coc-format-selected)
+nmap <leader>f	<Plug>(coc-format-selected)
 
 augroup mygroup
   autocmd!
@@ -203,8 +239,8 @@ augroup end
 
 " Applying code actions to the selected code block
 " Example: `<leader>aap` for current paragraph
-xmap <leader>a  <Plug>(coc-codeaction-selected)
-nmap <leader>a  <Plug>(coc-codeaction-selected)
+xmap <leader>a	<Plug>(coc-codeaction-selected)
+nmap <leader>a	<Plug>(coc-codeaction-selected)
 
 " Remap keys for applying code actions at the cursor position
 nmap <leader>ac  <Plug>(coc-codeaction-cursor)
@@ -251,10 +287,10 @@ xmap <silent> <C-s> <Plug>(coc-range-select)
 command! -nargs=0 Format :call CocActionAsync('format')
 
 " Add `:Fold` command to fold current buffer
-command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+command! -nargs=? Fold :call	 CocAction('fold', <f-args>)
 
 " Add `:OR` command for organize imports of the current buffer
-command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.organizeImport')
+command! -nargs=0 OR   :call	 CocActionAsync('runCommand', 'editor.action.organizeImport')
 
 " Add (Neo)Vim's native statusline support
 " NOTE: Please see `:h coc-status` for integrations with external plugins that
@@ -263,33 +299,81 @@ set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
 " Mappings for CoCList
 " Show all diagnostics
-nnoremap <silent><nowait> <space>a  :<C-u>CocList diagnostics<cr>
+nnoremap <silent><nowait> <space>a	:<C-u>CocList diagnostics<cr>
 " Manage extensions
-nnoremap <silent><nowait> <space>e  :<C-u>CocList extensions<cr>
+nnoremap <silent><nowait> <space>e	:<C-u>CocList extensions<cr>
 " Show commands
-nnoremap <silent><nowait> <space>c  :<C-u>CocList commands<cr>
+nnoremap <silent><nowait> <space>c	:<C-u>CocList commands<cr>
 " Find symbol of current document
-nnoremap <silent><nowait> <space>o  :<C-u>CocList outline<cr>
+nnoremap <silent><nowait> <space>o	:<C-u>CocList outline<cr>
 " Search workspace symbols
-nnoremap <silent><nowait> <space>s  :<C-u>CocList -I symbols<cr>
+nnoremap <silent><nowait> <space>s	:<C-u>CocList -I symbols<cr>
 " Do default action for next item
-nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
+nnoremap <silent><nowait> <space>j	:<C-u>CocNext<CR>
 " Do default action for previous item
-nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
+nnoremap <silent><nowait> <space>k	:<C-u>CocPrev<CR>
 " Resume latest coc list
-nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
+nnoremap <silent><nowait> <space>p	:<C-u>CocListResume<CR>
 
+" }}}
 
+" NightFly colorscheme settings {{{
 let g:nightflyCursorColor = v:true
 let g:nightflyUnderlineMatchParen = v:true
 let g:nightflyVirtualTextColor = v:true
 
 " }}}
 
+" Startify Plugin {{{
+
+let g:ascii= [
+    \ '       _          _          _          _          _',
+    \ '     >('')____,  >('')____,  >('')____,  >('')____,  >('') ___,',
+    \ '       (` =~~/    (` =~~/    (` =~~/    (` =~~/    (` =~~/',
+    \ '    ~^~^`---''~^~^~^`---''~^~^~^`---''~^~^~^`---''~^~^~^`---''~^~^~',
+    \]
+
+let g:startify_lists = [
+		  \ { 'type': 'files',	   'header': ['   MRU']			   },
+		  \ { 'type': 'bookmarks', 'header': ['   Bookmarks']	   },
+		  \ { 'type': 'commands',  'header': ['   Commands']	   },
+		  \ ]
+let g:startify_change_to_dir = 1
+let g:startify_fortune_use_unicode = 1
+let g:startify_custom_header = g:ascii + startify#fortune#boxed()
+" 'Most Recent Files' number
+let g:startify_files_number = 11
+" Update session automatically as you exit vim
+let g:startify_session_persistence= 1
+
+let g:user_emmet_settings = {
+\  'variables': {'lang': 'ja'},
+\  'html': {
+\	 'default_attributes': {
+\	   'option': {'value': v:null},
+\	   'textarea': {'id': v:null, 'name': v:null, 'cols': 10, 'rows': 10},
+\	 },
+\	 'snippets': {
+\	   'html:5': "<!DOCTYPE html>\n"
+\			   ."<html lang=\"${lang}\">\n"
+\			   ."<head>\n"
+\			   ."\t<meta charset=\"${charset}\">\n"
+\			   ."\t<title></title>\n"
+\			   ."\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n"
+\			   ."</head>\n"
+\			   ."<body>\n\t${child}|\n</body>\n"
+\			   ."</html>",
+\	 },
+\  },
+\}
+" }}}
+
+" }}}
+
 " Key Mappings ----------------------------------------------------------- {{{
 
-nmap <C-_>   <Plug>NERDCommenterToggle
-vmap <C-_>   <Plug>NERDCommenterToggle<CR>gv
+nmap <C-_>	 <Plug>NERDCommenterToggle
+vmap <C-_>	 <Plug>NERDCommenterToggle<CR>gv
 
 " Split windows size mappings
 noremap <c-up> <c-w>+
@@ -308,17 +392,17 @@ nnoremap <f5> :w <CR>:!python % <CR>
 
 " NERDTree specific mappings.
 nnoremap <F3> :NERDTreeToggle<cr>
-
+nmap <F8> :TagbarToggle<CR>
 nnoremap <F6> :call ToggleMouse()<CR>
 " Function to toggle mouse usage
 function! ToggleMouse()
-    if &mouse == 'a'
-        set mouse=
-        echo "Mouse usage disabled"
-    else
-        set mouse=a
-        echo "Mouse usage enabled"
-    endif
+	if &mouse == 'a'
+		set mouse=
+		echo "Mouse usage disabled"
+	else
+		set mouse=a
+		echo "Mouse usage enabled"
+	endif
 endfunction
 
 " Move line 
@@ -338,7 +422,7 @@ let &t_EI.="\e[1 q" "EI = нормальный режим
 command! Vimrc :vs $MYVIMRC
 
 function! RemoveTrailingWhitespace()
-    :%s/\s\+$//g
+	:%s/\s\+$//g
 endfunction
 
 command! TrimWhitespace call RemoveTrailingWhitespace()
@@ -346,8 +430,8 @@ command! TrimWhitespace call RemoveTrailingWhitespace()
 
 " Enable the marker method of folding.
 augroup filetype_vim
-    autocmd!
-    autocmd FileType vim setlocal foldmethod=marker
+	autocmd!
+	autocmd FileType vim setlocal foldmethod=marker
 augroup END
 
 " If the current file type is HTML, set indentation to 2 spaces.
@@ -360,42 +444,75 @@ autocmd FileType python setlocal expandtab shiftwidth=4 tabstop=4
 
 " If Vim version is equal to or greater than 7.3 enable undofile.
 if version >= 703
-    set undodir=~/.vim/backup
-    set undofile
-    set undoreload=10000
+	set undodir=~/.vim/backup
+	set undofile
+	set undoreload=10000
 endif
 
 " Display cursorline and cursorcolumn ONLY in active window.
 augroup cursor_off
-    autocmd!
-    autocmd WinLeave * set nocursorline nocursorcolumn
-    autocmd WinEnter * set cursorline nocursorcolumn
+	autocmd!
+	autocmd WinLeave * set nocursorline nocursorcolumn
+	autocmd WinEnter * set cursorline nocursorcolumn
 augroup END
 
 " If GUI version of Vim is running set these options.
 if has('gui_running')
+	set guioptions=
+	set guifont=JetBrainsMono\ NFM:h10
+	set langmenu=en_US
+	let $LANG = 'en_US'
+	source $VIMRUNTIME/delmenu.vim
+	source $VIMRUNTIME/menu.vim
+	" Set the background tone.
+	set background=dark
+	" Set the color scheme.
+	" Set a custom font you have installed on your computer.
+	" Syntax: set guifont=<font_name>\ <font_weight>\ <size>
+	" Display more of the file by default.
+	" Hide the toolbar, left-side scroll bar, right-side scroll bar, menu bar, and bottom scroll bar.
+	" Map the F4 key to toggle the menu, toolbar, and scroll bar.
+	nnoremap <F4> :if &guioptions=~#'mTr'<Bar>
+		\set guioptions=<Bar>
+		\else<Bar>
+		\set guioptions+=mTr<Bar>
+		\endif<CR>
 
-    \set guioptions-=m  "menu bar
-    \set guioptions-=T  "toolbar
-    \set guioptions-=r  "scrollbar
-    set guifont=JetBrains_Mono:h9
-    set langmenu=en_US
-    let $LANG = 'en_US'
-    source $VIMRUNTIME/delmenu.vim
-    source $VIMRUNTIME/menu.vim
-    " Set the background tone.
-    set background=dark
-    " Set the color scheme.
-    " Set a custom font you have installed on your computer.
-    " Syntax: set guifont=<font_name>\ <font_weight>\ <size>
-    " Display more of the file by default.
-    " Hide the toolbar, left-side scroll bar, right-side scroll bar, menu bar, and bottom scroll bar.
-    " Map the F4 key to toggle the menu, toolbar, and scroll bar.
-    nnoremap <F4> :if &guioptions=~#'mTr'<Bar>
-        \set guioptions-=TLrbm
-        \set guioptions-=mTr<Bar>
-        \else<Bar>
-        \set guioptions+=mTr<Bar>
-        \endif<CR>
+	" Changing font size fast
+	if has("unix")
+		function! FontSizePlus ()
+		  let l:gf_size_whole = matchstr(&guifont, '\( \)\@<=\d\+$')
+		  let l:gf_size_whole = l:gf_size_whole + 1
+		  let l:new_font_size = ' '.l:gf_size_whole
+		  let &guifont = substitute(&guifont, ' \d\+$', l:new_font_size, '')
+		endfunction
+
+		function! FontSizeMinus ()
+		  let l:gf_size_whole = matchstr(&guifont, '\( \)\@<=\d\+$')
+		  let l:gf_size_whole = l:gf_size_whole - 1
+		  let l:new_font_size = ' '.l:gf_size_whole
+		  let &guifont = substitute(&guifont, ' \d\+$', l:new_font_size, '')
+		endfunction
+	else
+		function! FontSizePlus ()
+		  let l:gf_size_whole = matchstr(&guifont, '\(:h\)\@<=\d\+$')
+		  let l:gf_size_whole = l:gf_size_whole + 1
+		  let l:new_font_size = ':h'.l:gf_size_whole
+		  let &guifont = substitute(&guifont, ':h\d\+$', l:new_font_size, '')
+		endfunction
+
+		function! FontSizeMinus ()
+		  let l:gf_size_whole = matchstr(&guifont, '\(:h\)\@<=\d\+$')
+		  let l:gf_size_whole = l:gf_size_whole - 1
+		  let l:new_font_size = ':h'.l:gf_size_whole
+		  let &guifont = substitute(&guifont, ':h\d\+$', l:new_font_size, '')
+		endfunction
+	endif
+
+
+	if has("gui_running")
+		nmap <S-F12> :call FontSizeMinus()<CR>
+		nmap <F12> :call FontSizePlus()<CR>
+	endif	
 endif
 " }}}
