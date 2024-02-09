@@ -6,9 +6,9 @@ This vimrc contains plugins for autocomplete, my favorite colorschemes, syntax h
 
 ## Instalation
 
-Clone repo with ```git clone``````
-Install Plug manager
-Then you need to install `Nodejs` version above 16 and `yarn` gloabaly
+Clone repo with `git clone https://github.com/Somed-1/my_vimrc.git`\n
+Install Plug manager\n
+Then you need to install `Nodejs` version above 16 and `yarn` gloabaly\n
 Coc Autocomplete extentions for:
 - Python: coc-pyright (`:CocInstall coc-pyright`)
 - C/C++: coc-clangd (`:CocInstall coc-clangd`)
